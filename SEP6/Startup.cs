@@ -34,7 +34,7 @@ namespace SEP6
             services.AddSingleton<TMDbClient>(client => new TMDbClient(Configuration.GetConnectionString("TMDB")));
             
             services.AddDbContext<MoviesContext>(opts =>
-                opts.UseSqlite("Data Source=C:\\Users\\luisf\\Downloads\\movies.db;"));
+                opts.UseSqlite("Data Source=../movies.db;"));
             
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "SEP6", Version = "v1"}); });
         }

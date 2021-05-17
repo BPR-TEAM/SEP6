@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SEP6.Database;
 
 namespace SEP6.Database.Migrations
 {
     [DbContext(typeof(MoviesContext))]
-    partial class MoviesContextModelSnapshot : ModelSnapshot
+    [Migration("20210517091646_user followr")]
+    partial class userfollowr
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -102,16 +104,18 @@ namespace SEP6.Database.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("FollowUserId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Password")
                         .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("PasswordSalt")
-                        .HasColumnType("BLOB");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("FollowUserId");
 
                     b.ToTable("Users");
                 });
@@ -172,21 +176,6 @@ namespace SEP6.Database.Migrations
                     b.ToTable("stars", t => t.ExcludeFromMigrations());
                 });
 
-            modelBuilder.Entity("UserUser", b =>
-                {
-                    b.Property<int>("FollowersId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("FollowsId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("FollowersId", "FollowsId");
-
-                    b.HasIndex("FollowsId");
-
-                    b.ToTable("Followers");
-                });
-
             modelBuilder.Entity("MovieToplists", b =>
                 {
                     b.HasOne("SEP6.Database.Movie", null)
@@ -228,6 +217,15 @@ namespace SEP6.Database.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SEP6.Database.User", b =>
+                {
+                    b.HasOne("SEP6.Database.User", "FollowUser")
+                        .WithMany("Follows")
+                        .HasForeignKey("FollowUserId");
+
+                    b.Navigation("FollowUser");
+                });
+
             modelBuilder.Entity("SEP6.Rating", b =>
                 {
                     b.HasOne("SEP6.Database.Movie", "Movie")
@@ -255,23 +253,10 @@ namespace SEP6.Database.Migrations
                     b.Navigation("Person");
                 });
 
-            modelBuilder.Entity("UserUser", b =>
-                {
-                    b.HasOne("SEP6.Database.User", null)
-                        .WithMany()
-                        .HasForeignKey("FollowersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SEP6.Database.User", null)
-                        .WithMany()
-                        .HasForeignKey("FollowsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("SEP6.Database.User", b =>
                 {
+                    b.Navigation("Follows");
+
                     b.Navigation("UserTopLists");
                 });
 #pragma warning restore 612, 618

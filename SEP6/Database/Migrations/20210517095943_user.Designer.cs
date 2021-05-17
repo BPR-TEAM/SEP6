@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SEP6.Database;
 
 namespace SEP6.Database.Migrations
 {
     [DbContext(typeof(MoviesContext))]
-    partial class MoviesContextModelSnapshot : ModelSnapshot
+    [Migration("20210517095943_user")]
+    partial class user
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -108,9 +110,6 @@ namespace SEP6.Database.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("PasswordSalt")
-                        .HasColumnType("BLOB");
-
                     b.HasKey("Id");
 
                     b.ToTable("Users");
@@ -174,15 +173,20 @@ namespace SEP6.Database.Migrations
 
             modelBuilder.Entity("UserUser", b =>
                 {
-                    b.Property<int>("FollowersId")
+                    b.Property<long>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("FollowUserId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("FollowsId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("FollowersId", "FollowsId");
+                    b.HasKey("UserId", "FollowUserId");
 
                     b.HasIndex("FollowsId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Followers");
                 });
@@ -257,12 +261,6 @@ namespace SEP6.Database.Migrations
 
             modelBuilder.Entity("UserUser", b =>
                 {
-                    b.HasOne("SEP6.Database.User", null)
-                        .WithMany()
-                        .HasForeignKey("FollowersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("SEP6.Database.User", null)
                         .WithMany()
                         .HasForeignKey("FollowsId")

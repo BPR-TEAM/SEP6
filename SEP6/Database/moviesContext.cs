@@ -128,6 +128,14 @@ namespace SEP6.Database
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
+            modelBuilder.Entity<User>()
+                .HasMany<User>(m => m.Follows)
+                .WithMany(m => m.Followers)
+                .UsingEntity(b =>
+                {
+                    b.ToTable("Followers");
+                });
+
             OnModelCreatingPartial(modelBuilder);
         }
         

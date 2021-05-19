@@ -64,7 +64,7 @@ namespace SEP6.Controllers
 
             if (dbUser.Password == givenPassword)
             {
-                return Ok("Logged in successfully");
+                return Ok(user.Id);
             }
             return Unauthorized("Wrong credentials");
         }

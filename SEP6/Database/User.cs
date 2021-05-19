@@ -7,6 +7,8 @@ namespace SEP6.Database
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        
+        public string Username { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
         
@@ -16,6 +18,7 @@ namespace SEP6.Database
         
         public virtual List<Toplists> UserTopLists { get; set; }
         
+        public virtual string Token { get; set; }
         public virtual byte[] PasswordSalt { get; set; }
         public virtual ICollection<User> Follows { get; set; }
         public virtual ICollection<User> Followers { get; set; }

@@ -136,6 +136,9 @@ namespace SEP6.Database
                     b.ToTable("Followers");
                 });
 
+            modelBuilder.Entity<User>().HasIndex(a => a.Username).IsUnique();
+            modelBuilder.Entity<User>().HasIndex(a => a.Token).IsUnique();
+
             OnModelCreatingPartial(modelBuilder);
         }
         

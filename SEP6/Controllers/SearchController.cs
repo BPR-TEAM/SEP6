@@ -29,6 +29,12 @@ namespace SEP6.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Search for movies
+        /// </summary>
+        /// <param name="searchText"></param>
+        /// <param name="searchType">1-Users 2- Movies</param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<List<string>> Search(string searchText, SearchType searchType)
         {
@@ -43,7 +49,7 @@ namespace SEP6.Controllers
         [NonAction]
         public List<string> SearchUser(string searchText)
         {
-            var users = _moviesContext.Users.ToList();
+            var users = _moviesContext.Users.AsParallel().ToList();
             var ratios = new Dictionary<string,int>();
             foreach (var user in users)
             {
@@ -69,7 +75,7 @@ namespace SEP6.Controllers
         [NonAction]
         public List<string> SearchMovie(string searchText)
         {
-            var movies = _moviesContext.Movies.ToList();
+            var movies = _moviesContext.Movies.AsParallel().ToList();
             var ratios = new Dictionary<string,int>();
             foreach (var movie in movies)
             {

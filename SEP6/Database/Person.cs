@@ -9,6 +9,6 @@ namespace SEP6
     {
         public long Id { get; set; }
         public string Name { get; set; }
-        public byte[] Birth { get; set; }
+        public int? Birth { get; set; }
     }
 }

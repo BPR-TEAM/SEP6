@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SEP6.Database;
+using SEP6.Utilities;
+using TMDbLib.Objects.Authentication;
 
 namespace SEP6.Controllers
 {
@@ -23,6 +25,12 @@ namespace SEP6.Controllers
             _dbContext = db;
         }
 
+        
+        /// <summary>
+        /// User can register here
+        /// </summary>
+        /// <param name="user">Should contain all the info up to country</param>
+        /// <returns></returns>
         [HttpPost]
         [Route("Register")]
         public ObjectResult SignUp([FromBody] User user)
@@ -42,8 +50,17 @@ namespace SEP6.Controllers
             return Ok("Registration complete!");
         }
         
+        
+        /// <summary>
+        /// User can log in here
+        /// </summary>
+        /// <param name="user">Email and password must be filled</param>
+        /// <returns>Authentication token </returns> 
+        /// <response code="200">Login successful returns token</response>
+        /// <response code="401">"Wrong credentials</response>     
         [HttpPost]
         [Route("Login")]
+        [ProducesResponseType(typeof(string),200)]
         public ObjectResult Login([FromBody] User user)
         {
             if (user.Password == null || user.Email == null)
@@ -64,9 +81,41 @@ namespace SEP6.Controllers
 
             if (dbUser.Password == givenPassword)
             {
-                return Ok(user.Id);
+                Guid g = Guid.NewGuid();
+                string GuidString = Convert.ToBase64String(g.ToByteArray());
+                GuidString = GuidString.Replace("=","");
+                GuidString = GuidString.Replace("+","");
+                dbUser.Token = GuidString;
+                _dbContext.SaveChanges();
+                return Ok(dbUser.Id+"="+dbUser.Token);
             }
             return Unauthorized("Wrong credentials");
+        }
+        
+        /// <summary>
+        /// Logs out the user
+        /// </summary>
+        /// <param name="token">Auth token should be sent to confirm user</param>
+        /// <response code="200">Logout successful</response>
+        /// <response code="400">"User or token do not exist</response>     
+        [HttpPost]
+        [Route("Logout")]
+        public ObjectResult Logout([FromHeader] string token)
+        {
+            User user;
+            bool verified;
+            ControllerUtilities.TokenVerification(token, _dbContext, out user, out verified);
+            if (verified)
+            {
+                user.Token = "";
+                _dbContext.SaveChanges();
+                return Ok("Logout successful");
+            }
+            else
+            {
+                return BadRequest("User or token do not exist");
+            }
+            
         }
 
         [NonAction]

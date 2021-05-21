@@ -1,10 +1,10 @@
 ﻿using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SEP6.Database;
 using SEP6.Utilities;
-using TMDbLib.Client;
 
 namespace SEP6.Controllers
 {
@@ -23,11 +23,9 @@ namespace SEP6.Controllers
             }
 
             [HttpPost]
-            public ObjectResult Add([FromBody] Toplists toplist,string token)
+            public ObjectResult Add([FromBody] Toplists toplist,[FromHeader]string token)
             {
-                var user = _moviesContext.Users.First(a => a.Token == token);
-                
-                if (ControllerUtilities.TokenVerification(user, toplist.UserId, token))
+                if (!ControllerUtilities.TokenVerification(token, _moviesContext))
                     return Unauthorized("User/token mismatch");
 
                 var movies = toplist.Movies.ToList();
@@ -44,14 +42,11 @@ namespace SEP6.Controllers
             }
             
             [HttpPut]
-            public ObjectResult Edit([FromBody] Toplists toplist,string token)
+            public ObjectResult Edit([FromBody] Toplists toplist,[FromHeader]string token)
             {
-                var user = _moviesContext.Users.First(a => a.Token == token);
-                
-                if (ControllerUtilities.TokenVerification(user, toplist.UserId, token))
+                if (!ControllerUtilities.TokenVerification(token, _moviesContext))
                     return Unauthorized("User/token mismatch");
-                
-                
+
                 var movies = toplist.Movies.ToList();
                 
                 var dbToplist = _moviesContext.TopLists
@@ -76,16 +71,17 @@ namespace SEP6.Controllers
             }
 
             [HttpGet]
-            public ObjectResult Get(string token, int userid)
+            public ObjectResult Get([FromHeader]string token, string username)
             {
                 var user = _moviesContext.Users
                     .Include(a => a.UserTopLists)
-                    .First(a=> a.Id == userid);
+                    .ThenInclude(a=> a.Movies)
+                    .First(a=> a.Username == username);
 
-                if (ControllerUtilities.TokenVerification(user, userid, token))
-                    return Unauthorized("User/token mismatch");
-
-                return Ok(user.UserTopLists);
+                if (ControllerUtilities.TokenVerification(token,_moviesContext))
+                    return Ok(user.UserTopLists);
+                
+                return Unauthorized("User/token mismatch");
             }
     }
 }

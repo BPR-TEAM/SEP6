@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SEP6.Database;
+using SEP6.DB;
 using SEP6.Utilities;
 
 namespace SEP6.Controllers
@@ -15,9 +15,9 @@ namespace SEP6.Controllers
     public class UserController : ControllerBase
     {
         private readonly ILogger<AuthController> _logger;
-        private readonly MoviesContext _dbContext;
+        private readonly MoviesDbContext _dbContext;
 
-        public UserController(ILogger<AuthController> logger, MoviesContext db)
+        public UserController(ILogger<AuthController> logger, MoviesDbContext db)
         {
             _logger = logger;
             _dbContext = db;

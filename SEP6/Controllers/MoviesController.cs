@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SEP6.Database;
+using SEP6.DB;
 using TMDbLib.Client;
 
 namespace SEP6.Controllers
@@ -16,9 +16,9 @@ namespace SEP6.Controllers
     {
         private readonly ILogger<AuthController> _logger;
         private readonly TMDbClient _client;
-        private readonly MoviesContext _moviesContext;
+        private readonly MoviesDbContext _moviesContext;
 
-        public MoviesController(ILogger<AuthController> logger, TMDbClient client, MoviesContext moviesContext)
+        public MoviesController(ILogger<AuthController> logger, TMDbClient client, MoviesDbContext moviesContext)
         {
             _client = client;
             _moviesContext = moviesContext;

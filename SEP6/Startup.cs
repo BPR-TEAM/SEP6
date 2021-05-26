@@ -14,7 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using SEP6.Database;
+using SEP6.DB;
 using TMDbLib.Client;
 
 namespace SEP6
@@ -40,8 +40,10 @@ namespace SEP6
 
             services.AddSingleton<TMDbClient>(client => new TMDbClient(Configuration.GetConnectionString("TMDB")));
             
-            services.AddDbContext<MoviesContext>(opts =>
-                opts.UseSqlite("Data Source=../movies.db;"));
+            
+            
+            services.AddDbContext<MoviesDbContext>(opts =>
+                opts.UseSqlServer(Configuration.GetConnectionString("AzureDB")));
             
             services.AddSwaggerGen(c =>
             {

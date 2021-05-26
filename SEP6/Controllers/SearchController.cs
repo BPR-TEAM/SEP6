@@ -7,8 +7,7 @@ using FuzzySharp;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SEP6.Database;
-using SEP6.Database.Migrations;
+using SEP6.DB;
 using TMDbLib.Client;
 using Process = FuzzySharp.Process;
 
@@ -20,9 +19,9 @@ namespace SEP6.Controllers
     {
         private readonly ILogger<SearchController> _logger;
         private readonly TMDbClient _client;
-        private readonly MoviesContext _moviesContext;
+        private readonly MoviesDbContext _moviesContext;
 
-        public SearchController(ILogger<SearchController> logger, TMDbClient client, MoviesContext moviesContext)
+        public SearchController(ILogger<SearchController> logger, TMDbClient client, MoviesDbContext moviesContext)
         {
             _client = client;
             _moviesContext = moviesContext;

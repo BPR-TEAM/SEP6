@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using SEP6.Database;
-using SEP6.Database.Migrations;
+using SEP6.DB;
 
 namespace SEP6.Utilities
 {
     public static class ControllerUtilities
     {
-        public static void TokenVerification(string token,MoviesContext dbContext, out User user, out bool isVerified)
+        public static void TokenVerification(string token,MoviesDbContext dbContext, out User user, out bool isVerified)
         {
             isVerified = true;
             
@@ -27,7 +26,7 @@ namespace SEP6.Utilities
                 isVerified = false;
         }
         
-        public static bool TokenVerification(string token,MoviesContext dbContext)
+        public static bool TokenVerification(string token,MoviesDbContext dbContext)
         {
             var splitToken = token.Split("=");
             if (splitToken.Length > 2)

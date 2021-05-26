@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SEP6.Database;
+using SEP6.DB;
 using SEP6.Utilities;
-using TMDbLib.Objects.Authentication;
+using User = SEP6.DB.User;
 
 namespace SEP6.Controllers
 {
@@ -17,9 +15,9 @@ namespace SEP6.Controllers
     public class AuthController: ControllerBase
     {
         private readonly ILogger<AuthController> _logger;
-        private readonly MoviesContext _dbContext;
+        private readonly MoviesDbContext _dbContext;
 
-        public AuthController(ILogger<AuthController> logger, MoviesContext db)
+        public AuthController(ILogger<AuthController> logger, MoviesDbContext db)
         {
             _logger = logger;
             _dbContext = db;

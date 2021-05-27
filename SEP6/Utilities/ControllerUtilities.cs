@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using SEP6.DB;
@@ -15,15 +16,29 @@ namespace SEP6.Utilities
             if (splitToken.Length > 2)
                isVerified = false;
 
-            var id = Int32.Parse(splitToken[0]);
-            user = dbContext.Users
-                .First(a => a.Id == id);
-            
-            if (user == null)
+            user = null;
+            User tempUser = null;
+            try
+            {
+                var id = Int32.Parse(splitToken[0]);
+                tempUser = dbContext.Users
+                    .First(a => a.Id == id);
+            }
+            catch (InvalidOperationException e)
+            {
                 isVerified = false;
+            }
 
-            if (splitToken[1] != user.Token)
-                isVerified = false;
+            if (isVerified)
+            {
+                user = tempUser;
+                if (splitToken[1] != user.Token)
+                {
+                    isVerified = false;
+                    user = null;
+                }
+                   
+            }
         }
         
         public static bool TokenVerification(string token,MoviesDbContext dbContext)
@@ -31,13 +46,18 @@ namespace SEP6.Utilities
             var splitToken = token.Split("=");
             if (splitToken.Length > 2)
                 return false;
-            
-            var id = Int32.Parse(splitToken[0]);
-            var user = dbContext.Users
+
+            User user;
+            try
+            {
+                var id = Int32.Parse(splitToken[0]);
+                user = dbContext.Users
                 .First(a => a.Id == id);
-            
-            if (user == null)
+            }
+            catch (InvalidOperationException e)
+            {
                 return false;
+            }
 
             if (splitToken[1] != user.Token)
                 return false;

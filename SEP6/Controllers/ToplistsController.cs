@@ -32,7 +32,7 @@ namespace SEP6.Controllers
                 toplist.Movies.Clear();
                 for (int i = 0; i < movies.Count; i++)
                 {
-                    var dbMovie = _moviesContext.Movies.First(a => a.Id == movies[i].Id);
+                    var dbMovie = _moviesContext.Movies.FirstOrDefault(a => a.Id == movies[i].Id);
                     toplist.Movies.Add(dbMovie);
                 }
                 
@@ -51,7 +51,7 @@ namespace SEP6.Controllers
                 
                 var dbToplist = _moviesContext.TopLists
                     .Include(a => a.Movies)
-                    .First(a => a.Id == toplist.Id);
+                    .FirstOrDefault(a => a.Id == toplist.Id);
                 
                 //clears the lists to avoid tracking on thr wrong entities
                 dbToplist.Movies.Clear();
@@ -60,7 +60,7 @@ namespace SEP6.Controllers
                 //updates the data received in the dbTopList that is being tracked by the EF
                 for (int i = 0; i < movies.Count; i++)
                 {
-                    var dbMovie = _moviesContext.Movies.First(a => a.Id == movies[i].Id);
+                    var dbMovie = _moviesContext.Movies.FirstOrDefault(a => a.Id == movies[i].Id);
                     dbToplist.Movies.Add(dbMovie);
                 }
 
@@ -76,7 +76,7 @@ namespace SEP6.Controllers
                 var user = _moviesContext.Users
                     .Include(a => a.TopLists)
                     .ThenInclude(a=> a.Movies)
-                    .First(a=> a.Username == username);
+                    .FirstOrDefault(a=> a.Username == username);
 
                 if (ControllerUtilities.TokenVerification(token,_moviesContext))
                     return Ok(user.TopLists);

@@ -67,7 +67,7 @@ namespace SEP6.Controllers
             }
             
             var dbUser = _dbContext.Users
-                .First(a => a.Email == user.Email);
+                .FirstOrDefault(a => a.Email == user.Email);
 
             if (dbUser == null)
             {

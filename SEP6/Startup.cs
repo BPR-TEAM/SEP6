@@ -40,8 +40,6 @@ namespace SEP6
 
             services.AddSingleton<TMDbClient>(client => new TMDbClient(Configuration.GetConnectionString("TMDB")));
             
-            
-            
             services.AddDbContext<MoviesDbContext>(opts =>
                 opts.UseSqlServer(Configuration.GetConnectionString("AzureDB")));
             

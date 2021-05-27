@@ -14,10 +14,10 @@ namespace SEP6.Controllers
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly ILogger<AuthController> _logger;
+        private readonly ILogger<UserController> _logger;
         private readonly MoviesDbContext _dbContext;
 
-        public UserController(ILogger<AuthController> logger, MoviesDbContext db)
+        public UserController(ILogger<UserController> logger, MoviesDbContext db)
         {
             _logger = logger;
             _dbContext = db;
@@ -35,18 +35,32 @@ namespace SEP6.Controllers
         public ObjectResult Follow([FromHeader] string token, string userToFollow)
         {
             ControllerUtilities.TokenVerification(token, _dbContext, out var userFollow, out var verified);
-            
-            if(!verified)
-                return Unauthorized("Token expired");
 
-            var userTo = _dbContext.Users.Include(a=>a.Followers).First(a => a.Username == userToFollow);
+            if (!verified)
+            {
+                _logger.Log(LogLevel.Information, $"Token expired {token}");
+                return Unauthorized("Token expired");
+            }
+
+            var userTo = _dbContext.Users.Include(a=>a.Followers).FirstOrDefault(a => a.Username == userToFollow);
             if (userTo == null)
+            {
+                _logger.Log(LogLevel.Information, $"User {userToFollow} not found");
                 return NotFound($"User {userToFollow} not found");
-            
+            }
+
+            if (userTo.Followers.Contains(userFollow))
+            {
+                userTo.Followers.Remove(userFollow);
+                _dbContext.SaveChanges();
+                _logger.Log(LogLevel.Information, $"{userFollow.Username} doesn't follow {userToFollow} anymore!");
+                return  Ok($"{userFollow.Username} doesn't follow {userToFollow} anymore!");
+            }
             
             userTo.Followers.Add(userFollow);
             _dbContext.SaveChanges();
             
+            _logger.Log(LogLevel.Information, $"{userFollow.Username} now follows {userToFollow}!");
             return Ok($"{userFollow.Username} now follows {userToFollow}!");
         }
         

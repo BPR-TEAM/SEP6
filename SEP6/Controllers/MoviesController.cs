@@ -7,6 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SEP6.DB;
 using TMDbLib.Client;
+using TMDbLib.Objects.Find;
+using TMDbLib.Objects.Languages;
+using Person = TMDbLib.Objects.People.Person;
 
 namespace SEP6.Controllers
 {
@@ -30,7 +33,7 @@ namespace SEP6.Controllers
         public async Task<ObjectResult> Get(string id)
         {
             var longId = Int64.Parse(id);
-            var dbMovie = _moviesContext.Movies.First(a => a.Id == longId);
+            var dbMovie = _moviesContext.Movies.FirstOrDefault(a => a.Id == longId);
 
             if (dbMovie == null)
                 return NotFound("ID does not correspond to any movie");
@@ -45,18 +48,48 @@ namespace SEP6.Controllers
         }
         
         [HttpGet]
+        [Route("topRated")]
+        [ProducesResponseType(typeof(Dictionary<string, Movie>),200)]
+        public async Task<ObjectResult> GetTopRatedMovies()
+        {
+            var movies = await _client.GetMovieTopRatedListAsync();
+            return Ok(movies.Results);
+        }
+        
+        [HttpGet]
+        [Route("mostPopular")]
+        [ProducesResponseType(typeof(Dictionary<string, Movie>),200)]
+        public async Task<ObjectResult> GetMostPopular()
+        {
+            var movies = await _client.GetMoviePopularListAsync();
+            return Ok(movies.Results);
+        }
+
+        [HttpGet]
         [ProducesResponseType(typeof(List<Director>),200)]
         [Route("directors")]
         public async Task<ObjectResult> GetDirectors(string id)
         {
             var longId = Int64.Parse(id);
-            var dbMovie = _moviesContext.Directors.Include(a=>a.Person)
-                .Where(a => a.MovieId == longId).ToList();
-
+            var dbMovie = _moviesContext.Directors
+                .Include(a=>a.Person)
+                .Where(a => a.MovieId == longId)
+                .AsParallel()
+                .ToList();
+            
             if (dbMovie.Count < 1)
                 return NotFound("ID does not correspond to any movie");
             
-            return Ok(dbMovie);
+            var directors = new List<Person>();
+            foreach (var director in dbMovie)
+            {
+                var s = await _client.FindAsync(FindExternalSource.Imdb, $"nm{director.PersonId.ToString().PadLeft(7,'0')}");
+                var idDirector = s.PersonResults[0].Id;
+                var directortmdb = await _client.GetPersonAsync(idDirector);
+                directors.Add(directortmdb);
+            }
+            
+            return Ok(directors);
         }
         
         [HttpGet]
@@ -66,10 +99,18 @@ namespace SEP6.Controllers
         {
             var longId = Int64.Parse(id);
             var dbMovie = _moviesContext.Stars.Include(a=> a.Person)
-                .Where(a => a.MovieId == longId).ToList();
+                .Where(a => a.MovieId == longId).AsParallel().ToList();
 
-            if (dbMovie.Count < 1)
-                return NotFound("ID does not correspond to any movie");
+            if (dbMovie.Count < 1) return NotFound("ID does not correspond to any movie");
+
+            var stars = new List<Person>();
+            foreach (var star in dbMovie)
+            {
+                var s = await _client.FindAsync(FindExternalSource.Imdb, $"nm{star.PersonId.ToString().PadLeft(7,'0')}");
+                var starId = s.PersonResults[0].Id;
+                var starImdb = await _client.GetPersonAsync(starId);
+                stars.Add(starImdb);
+            }
             
             return Ok(dbMovie);
         }

@@ -38,7 +38,7 @@ namespace SEP6
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                 );
 
-            services.AddSingleton<TMDbClient>(client => new TMDbClient(Configuration.GetConnectionString("TMDB")));
+            services.AddScoped<TMDbClient>(client => new TMDbClient(Configuration.GetConnectionString("TMDB")));
             
             services.AddDbContext<MoviesDbContext>(opts =>
                 opts.UseSqlServer(Configuration.GetConnectionString("AzureDB")));

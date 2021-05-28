@@ -69,9 +69,9 @@ namespace SEP6
 
             app.UseHttpsRedirection();
 
-            app.UseCors("AllowOrigin");
-            
             app.UseRouting();
+            
+            app.UseCors("AllowOrigin");
 
             app.UseAuthorization();
 

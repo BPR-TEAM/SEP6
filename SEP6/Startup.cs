@@ -37,6 +37,9 @@ namespace SEP6
                 .AddNewtonsoftJson(options =>
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                 );
+            
+            services.AddCors((options =>
+                { options.AddPolicy("AllowOrigin", options=>options.WithOrigins("https://salmon-sea-005274003.azurestaticapps.net/"));}));
 
             services.AddSingleton<TMDbClient>(client => new TMDbClient(Configuration.GetConnectionString("TMDB")));
             
@@ -66,6 +69,8 @@ namespace SEP6
 
             app.UseHttpsRedirection();
 
+            app.UseCors("AllowOrigin");
+            
             app.UseRouting();
 
             app.UseAuthorization();

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -12,6 +13,7 @@ namespace SEP6.Controllers
     /// </summary>
     [ApiController]
     [Route("[controller]")]
+    [EnableCors("AllowOrigin")] 
     public class UserController : ControllerBase
     {
         private readonly ILogger<UserController> _logger;

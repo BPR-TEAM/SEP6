@@ -39,8 +39,8 @@ namespace SEP6
                 );
             
             services.AddCors((options =>
-                { options.AddPolicy("AllowOrigin", options=>options.WithOrigins("https://salmon-sea-005274003.azurestaticapps.net"));
-                    options.AddPolicy("AllowAndrei", options=>options.WithOrigins("http://10.10.23.187")); }));
+                { options.AddPolicy("AllowOrigin", options=>options.WithOrigins("https://salmon-sea-005274003.azurestaticapps.net",
+                 "http://10.10.23.187", "http://10.10.23.187:3000"));}));
 
             services.AddSingleton<TMDbClient>(client => new TMDbClient(Configuration.GetConnectionString("TMDB")));
             
@@ -73,7 +73,6 @@ namespace SEP6
             app.UseRouting();
 
             app.UseCors("AllowOrigin");
-            app.UseCors("AllowAndrei");
 
             app.UseAuthorization();
 

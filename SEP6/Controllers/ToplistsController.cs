@@ -10,8 +10,7 @@ using SEP6.Utilities;
 namespace SEP6.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    [EnableCors("AllowOrigin")] 
+    [Route("[controller]")] 
     public class ToplistsController :ControllerBase
     {
             private readonly ILogger<ToplistsController> _logger;

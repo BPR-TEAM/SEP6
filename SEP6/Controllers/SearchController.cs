@@ -16,7 +16,6 @@ namespace SEP6.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [EnableCors("AllowOrigin")] 
     public class SearchController : ControllerBase
     {
         private readonly ILogger<SearchController> _logger;

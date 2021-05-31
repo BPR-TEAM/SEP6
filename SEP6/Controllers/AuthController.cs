@@ -13,7 +13,6 @@ namespace SEP6.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [EnableCors("AllowOrigin")] 
     public class AuthController: ControllerBase
     {
         private readonly ILogger<AuthController> _logger;

@@ -16,7 +16,6 @@ namespace SEP6.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [EnableCors("AllowOrigin")] 
     public class MoviesController : ControllerBase
     {
         private readonly ILogger<AuthController> _logger;

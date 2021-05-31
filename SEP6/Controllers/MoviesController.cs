@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using SEP6.DB;
 using TMDbLib.Client;
 using TMDbLib.Objects.Find;
-using TMDbLib.Objects.Languages;
 using Person = TMDbLib.Objects.People.Person;
 
 namespace SEP6.Controllers
@@ -66,29 +65,28 @@ namespace SEP6.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(List<Director>),200)]
+        [ProducesResponseType(typeof(List<Director>), 200)]
         [Route("directors")]
         public async Task<ObjectResult> GetDirectors(string id)
         {
             var longId = Int64.Parse(id);
             var dbMovie = _moviesContext.Directors
-                .Include(a=>a.Person)
+                .Include(a => a.Person)
                 .Where(a => a.MovieId == longId)
                 .AsParallel()
                 .ToList();
             
-            if (dbMovie.Count < 1)
-                return NotFound("ID does not correspond to any movie");
-            
+            if (dbMovie.Count < 1) return NotFound("ID does not correspond to any movie");
             var directors = new List<Person>();
             foreach (var director in dbMovie)
             {
-                var s = await _client.FindAsync(FindExternalSource.Imdb, $"nm{director.PersonId.ToString().PadLeft(7,'0')}");
+                var s = await _client.FindAsync(FindExternalSource.Imdb,
+                    $"nm{director.PersonId.ToString().PadLeft(7, '0')}");
                 var idDirector = s.PersonResults[0].Id;
                 var directortmdb = await _client.GetPersonAsync(idDirector);
                 directors.Add(directortmdb);
             }
-            
+
             return Ok(directors);
         }
         

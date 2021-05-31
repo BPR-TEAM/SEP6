@@ -2,6 +2,7 @@
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -12,10 +13,14 @@ namespace SEP6.Tests.Integration.Utilities
 {
     public class CustomApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup: class
     {
+        private SqliteConnection Connection;
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureServices(services =>
             {
+                Connection = new SqliteConnection("DataSource=:memory:");
+                Connection.Open();
+
                 var descriptor = services.SingleOrDefault(
                     d => d.ServiceType ==
                          typeof(DbContextOptions<MoviesDbContext>));
@@ -23,13 +28,8 @@ namespace SEP6.Tests.Integration.Utilities
 
                 services.AddDbContext<MoviesDbContext>(options =>
                 {
-                    options.UseInMemoryDatabase("InMemoryDbForTesting");
+                    options.UseSqlite(Connection);
                 });
-                
-                var MoviesTMDB = services.SingleOrDefault(
-                    d => d.ServiceType == typeof(TMDbClient));
-                services.Remove(MoviesTMDB);
-                services.AddScoped<TMDbClient,TMDBClientStub>();
 
                 var sp = services.BuildServiceProvider();
 
@@ -40,8 +40,8 @@ namespace SEP6.Tests.Integration.Utilities
                     var logger = scopedServices
                         .GetRequiredService<ILogger<CustomApplicationFactory<TStartup>>>();
 
+                    
                     db.Database.EnsureCreated();
-
                     try
                     {
                         DatabaseSeeder.SeedDatabase(db);
@@ -53,6 +53,12 @@ namespace SEP6.Tests.Integration.Utilities
                     }
                 }
             });
+        }
+        
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            Connection.CloseAsync();
         }
     }
 }

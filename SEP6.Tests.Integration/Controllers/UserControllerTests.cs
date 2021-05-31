@@ -72,9 +72,9 @@ namespace SEP6.Tests.Integration.Controllers
                 .Include(u=>u.Follows)
                 .FirstOrDefault(u => u.Id == 1);
             
-            Assert.Equal(userToFollow,userFollow.Follows.First().Username);
+            Assert.Equal(userToFollow,userFollow?.Follows.FirstOrDefault()?.Username);
             Assert.Equal(HttpStatusCode.OK,response.StatusCode);
-            Assert.Equal($"{userFollow.Username} now follows {userToFollow}!",message);
+            Assert.Equal($"{userFollow?.Username} now follows {userToFollow}!",message);
         }
         
         [Fact]
@@ -97,7 +97,7 @@ namespace SEP6.Tests.Integration.Controllers
             
             Assert.Empty(userFollow.Follows);
             Assert.Equal(HttpStatusCode.OK,unfollowResponse.StatusCode);
-            Assert.Equal($"{userFollow.Username} doesn't follow {userToUnfollow} anymore!",message);
+            Assert.Equal($"{userFollow?.Username} doesn't follow {userToUnfollow} anymore!",message);
         }
     }
 }

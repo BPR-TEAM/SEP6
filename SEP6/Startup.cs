@@ -40,7 +40,7 @@ namespace SEP6
             
             services.AddCors((options =>
                 { options.AddPolicy("AllowOrigin", options=>options.WithOrigins("https://salmon-sea-005274003.azurestaticapps.net",
-                 "http://10.10.23.187", "http://10.10.23.187:3000"));}));
+                 "http://10.10.23.187", "http://10.10.23.187:3000").AllowAnyHeader());}));
 
             services.AddScoped<TMDbClient>(client => new TMDbClient(Configuration.GetConnectionString("TMDB")));
             

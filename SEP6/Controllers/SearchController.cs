@@ -30,7 +30,7 @@ namespace SEP6.Controllers
         }
 
         /// <summary>
-        /// Search for movies
+        /// Search for movies/ users
         /// </summary>
         /// <param name="searchText"></param>
         /// <param name="searchType">1-Users 2- Movies</param>

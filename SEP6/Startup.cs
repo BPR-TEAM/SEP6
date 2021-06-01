@@ -42,7 +42,7 @@ namespace SEP6
                 { options.AddPolicy("AllowOrigin", options=>options.WithOrigins("https://salmon-sea-005274003.azurestaticapps.net",
                  "http://10.10.23.187", "http://10.10.23.187:3000"));}));
 
-            services.AddSingleton<TMDbClient>(client => new TMDbClient(Configuration.GetConnectionString("TMDB")));
+            services.AddScoped<TMDbClient>(client => new TMDbClient(Configuration.GetConnectionString("TMDB")));
             
             services.AddDbContext<MoviesDbContext>(opts =>
                 opts.UseSqlServer(Configuration.GetConnectionString("AzureDB")));

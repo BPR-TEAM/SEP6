@@ -37,7 +37,6 @@ namespace SEP6.Utilities
                     isVerified = false;
                     user = null;
                 }
-                   
             }
         }
         

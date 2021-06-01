@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
@@ -9,8 +10,10 @@ using SEP6.DB;
 using SEP6.Utilities;
 using User = SEP6.DB.User;
 
+[assembly:InternalsVisibleTo("SEP6.Tests.Integration")]
 namespace SEP6.Controllers
 {
+   
     [ApiController]
     [Route("[controller]")]
     public class AuthController: ControllerBase
@@ -62,7 +65,7 @@ namespace SEP6.Controllers
         [ProducesResponseType(typeof(string),200)]
         public ObjectResult Login([FromBody] User user)
         {
-            if (user.Password == null || user.Email == null)
+            if (String.IsNullOrEmpty(user.Password) || String.IsNullOrEmpty(user.Email))
             {
                 return Unauthorized("Fill the fields");
             }
@@ -101,9 +104,7 @@ namespace SEP6.Controllers
         [Route("Logout")]
         public ObjectResult Logout([FromHeader] string token)
         {
-            User user;
-            bool verified;
-            ControllerUtilities.TokenVerification(token, _dbContext, out user, out verified);
+            ControllerUtilities.TokenVerification(token, _dbContext, out var user, out var verified);
             if (verified)
             {
                 user.Token = "";
@@ -118,7 +119,7 @@ namespace SEP6.Controllers
         }
 
         [NonAction]
-        public string HashPassword(byte[] salt, string password)
+        internal static string HashPassword(byte[] salt, string password)
         {
             return Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: password,

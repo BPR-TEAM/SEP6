@@ -111,7 +111,7 @@ namespace SEP6.Controllers
                 stars.Add(starImdb);
             }
             
-            return Ok(dbMovie);
+            return Ok(stars);
         }
         
         

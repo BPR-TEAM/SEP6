@@ -79,11 +79,11 @@ namespace SEP6.Controllers
 
             if(String.IsNullOrEmpty(toUser))
             {
-                return Ok(_dbContext.Users.Include(a=>a.TopLists).FirstOrDefault(a => a.Username == fromUser.Username));
+                return Ok(_dbContext.Users.Include(a=>a.TopLists).ThenInclude(toplist=>toplist.Movies).FirstOrDefault(a => a.Username == fromUser.Username));
             }
             else
             {
-                return Ok(_dbContext.Users.Include(a=>a.TopLists).FirstOrDefault(a => a.Username == toUser));
+                return Ok(_dbContext.Users.Include(a=>a.TopLists).ThenInclude(toplist=>toplist.Movies).FirstOrDefault(a => a.Username == toUser));
             }
         }
     }

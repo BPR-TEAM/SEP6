@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -64,6 +65,27 @@ namespace SEP6.Controllers
             _logger.Log(LogLevel.Information, $"{userFollow.Username} now follows {userToFollow}!");
             return Ok($"{userFollow.Username} now follows {userToFollow}!");
         }
-        
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public ObjectResult GetUser([FromHeader] string fromToken, string toUser)
+        {
+            ControllerUtilities.TokenVerification(fromToken, _dbContext, out var fromUser, out var verified);
+
+            if(!verified)
+            return Unauthorized("Malformed token");
+
+            if(String.IsNullOrEmpty(toUser))
+            {
+                return Ok(_dbContext.Users.Include(a=>a.TopLists).FirstOrDefault(a => a.Username == fromUser.Name));
+            }
+            else
+            {
+                return Ok(_dbContext.Users.Include(a=>a.TopLists).FirstOrDefault(a => a.Username == toUser));
+            }
+        }
     }
 }

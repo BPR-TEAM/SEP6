@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  build-and-test: 
+  test: 
     runs-on: windows-latest
     
     steps:
@@ -27,7 +27,7 @@ jobs:
       run: dotnet test --verbosity normal    
     
   build-and-deploy:
-    needs: build-and-test
+    needs: test
     runs-on: windows-latest
 
     steps:

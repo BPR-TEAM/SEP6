@@ -139,7 +139,7 @@ namespace SEP6.DB
             {
                 entity.HasIndex(e => e.UserId, "IX_TopLists_UserId");
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
+                entity.Property(e => e.Id);
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(100)

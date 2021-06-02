@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -80,7 +79,7 @@ namespace SEP6.Controllers
 
             if(String.IsNullOrEmpty(toUser))
             {
-                return Ok(_dbContext.Users.Include(a=>a.TopLists).FirstOrDefault(a => a.Username == fromUser.Name));
+                return Ok(_dbContext.Users.Include(a=>a.TopLists).FirstOrDefault(a => a.Username == fromUser.Username));
             }
             else
             {

@@ -53,7 +53,14 @@ namespace SEP6.Controllers
         public async Task<ObjectResult> GetTopRatedMovies()
         {
             var movies = await _client.GetMovieTopRatedListAsync();
-            return Ok(movies.Results);
+            var list = new List<TMDbLib.Objects.Movies.Movie>();
+            foreach (var movie in movies.Results)
+            {
+                var fullMovie = await _client.GetMovieAsync(movie.Id);
+                fullMovie.ImdbId = fullMovie.ImdbId.Substring(2);
+                list.Add(fullMovie);
+            }
+            return Ok(list);
         }
         
         [HttpGet]
@@ -62,7 +69,14 @@ namespace SEP6.Controllers
         public async Task<ObjectResult> GetMostPopular()
         {
             var movies = await _client.GetMoviePopularListAsync();
-            return Ok(movies.Results);
+            var list = new List<TMDbLib.Objects.Movies.Movie>();
+            foreach (var movie in movies.Results)
+            {
+                var fullMovie = await _client.GetMovieAsync(movie.Id);
+                fullMovie.ImdbId = fullMovie.ImdbId.Substring(2);
+                list.Add(fullMovie);
+            }
+            return Ok(list);
         }
 
         [HttpGet]

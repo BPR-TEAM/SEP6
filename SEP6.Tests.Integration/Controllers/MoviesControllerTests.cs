@@ -62,7 +62,7 @@ namespace SEP6.Tests.Integration.Controllers
             var url = "/Movies/topRated";
             
             var response = await client.GetAsync(url);
-            var message = ResponseHandler<List<SearchMovie>>.GetObject(response);
+            var message = ResponseHandler<List<TMDbLib.Objects.Movies.Movie>>.GetObject(response);
             
             Assert.Equal(HttpStatusCode.OK,response.StatusCode);
             Assert.NotEmpty(message);
@@ -76,7 +76,7 @@ namespace SEP6.Tests.Integration.Controllers
             var url = "/Movies/mostPopular";
             
             var response = await client.GetAsync(url);
-            var message = ResponseHandler<List<SearchMovie>>.GetObject(response);
+            var message = ResponseHandler<List<TMDbLib.Objects.Movies.Movie>>.GetObject(response);
             
             Assert.Equal(HttpStatusCode.OK,response.StatusCode);
             Assert.NotEmpty(message);

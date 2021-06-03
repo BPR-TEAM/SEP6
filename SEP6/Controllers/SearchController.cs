@@ -75,31 +75,29 @@ namespace SEP6.Controllers
         [NonAction]
         public List<string> SearchMovie(string searchText)
         {
-            List<int> movies = _moviesContext.Movies.AsNoTracking().Select(movie => movie.Id).AsParallel().ToList();
+            var movies = _moviesContext.Movies.Select(movie => new Movie(){Title = movie.Title, Id = movie.Id, Year = movie.Year}).AsNoTracking().AsParallel().ToList();
             var ratios = new Dictionary<string,int>();
-            string movieTitle;
-            foreach (var movieId in movies)
+            foreach (var movie in movies)
             {
-                movieTitle = _moviesContext.Movies.AsNoTracking().FirstOrDefault(a=> a.Id == movieId).Title;
-                var ratio = (int)(Fuzz.Ratio(searchText, movieTitle) * 0.5
-                                  + Fuzz.PartialRatio(searchText,movieTitle) * 0.75
-                                  + Fuzz.TokenSortRatio(searchText, movieTitle) + 0.75 )/2;
+                var ratio = (int)(Fuzz.Ratio(searchText, movie.Title) * 0.5
+                                  + Fuzz.PartialRatio(searchText,movie.Title) * 0.75
+                                  + Fuzz.TokenSortRatio(searchText, movie.Title) + 0.75 )/2;
               
                 if (ratios.Count < 10)
                 {
-                    ratios.Add(movieTitle + " " + _moviesContext.Movies.AsNoTracking().FirstOrDefault(a => a.Id == movieId).Year + ", " + movieId,ratio);
+                    ratios.Add(movie.Title + " " + movie.Year + ", " + movie.Id,ratio);
                 }
                 else
                 {
                     var lowestRatio = ratios.Aggregate((l, r) => l.Value < r.Value ? l : r);
                     if (ratio > lowestRatio.Value)
                     {
-                        if (movieTitle + " " +  _moviesContext.Movies.AsNoTracking().FirstOrDefault(a => a.Id == movieId).Year + ", " + movieId == lowestRatio.Key)
+                        if (movie.Title + " " +  movie.Year + ", " + movie.Id == lowestRatio.Key)
                         {
                             throw new Exception("Movies with same title");
                         }
                         ratios.Remove(lowestRatio.Key);
-                        ratios.Add(movieTitle + " " +  _moviesContext.Movies.AsNoTracking().FirstOrDefault(a => a.Id == movieId).Year + ", " + movieId,ratio);
+                        ratios.Add(movie.Title + " " +  movie.Year + ", " + movie.Id,ratio);
                     }
                 }
             }

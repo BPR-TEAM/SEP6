@@ -75,29 +75,29 @@ namespace SEP6.Controllers
         [NonAction]
         public List<string> SearchMovie(string searchText)
         {
-            var movies = _moviesContext.Movies.AsParallel().ToList();
+            List<string> movies = _moviesContext.Movies.Select(movie => movie.Title).AsParallel().ToList();
             var ratios = new Dictionary<string,int>();
-            foreach (var movie in movies)
+            foreach (var movieTitle in movies)
             {
-                var ratio = (int)(Fuzz.Ratio(searchText, movie.Title) * 0.5
-                                  + Fuzz.PartialRatio(searchText,movie.Title) * 0.75
-                                  + Fuzz.TokenSortRatio(searchText, movie.Title) + 0.75 )/2;
+                var ratio = (int)(Fuzz.Ratio(searchText, movieTitle) * 0.5
+                                  + Fuzz.PartialRatio(searchText,movieTitle) * 0.75
+                                  + Fuzz.TokenSortRatio(searchText, movieTitle) + 0.75 )/2;
               
                 if (ratios.Count < 10)
                 {
-                    ratios.Add(movie.Title + " " +  movie.Year + ", " + movie.Id,ratio);
+                    ratios.Add(movieTitle + " " + _moviesContext.Movies.Where(a => a.Title == movieTitle).Select(movies => movies.Year) + ", " + _moviesContext.Movies.Where(a => a.Title == movieTitle).Select(movies => movies.Id),ratio);
                 }
                 else
                 {
                     var lowestRatio = ratios.Aggregate((l, r) => l.Value < r.Value ? l : r);
                     if (ratio > lowestRatio.Value)
                     {
-                        if (movie.Title + " " +  movie.Year + ", " + movie.Id == lowestRatio.Key)
+                        if (movieTitle + " " +  _moviesContext.Movies.Where(a => a.Title == movieTitle).Select(movies => movies.Year) + ", " + _moviesContext.Movies.Where(a => a.Title == movieTitle).Select(movies => movies.Id) == lowestRatio.Key)
                         {
                             throw new Exception("Movies with same title");
                         }
                         ratios.Remove(lowestRatio.Key);
-                        ratios.Add(movie.Title + " " +  movie.Year + ", " + movie.Id,ratio);
+                        ratios.Add(movieTitle + " " +  _moviesContext.Movies.Where(a => a.Title == movieTitle).Select(movies => movies.Year) + ", " + _moviesContext.Movies.Where(a => a.Title == movieTitle).Select(movies => movies.Id),ratio);
                     }
                 }
             }

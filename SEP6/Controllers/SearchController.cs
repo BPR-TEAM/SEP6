@@ -85,19 +85,19 @@ namespace SEP6.Controllers
               
                 if (ratios.Count < 10)
                 {
-                    ratios.Add(movieTitle + " " + _moviesContext.Movies.Where(a => a.Title == movieTitle).Select(movies => movies.Year) + ", " + _moviesContext.Movies.Where(a => a.Title == movieTitle).Select(movies => movies.Id),ratio);
+                    ratios.Add(movieTitle + " " + _moviesContext.Movies.Where(a => a.Title == movieTitle).Select(movies => movies.Year).FirstOrDefault() + ", " + _moviesContext.Movies.Where(a => a.Title == movieTitle).Select(movies => movies.Id).FirstOrDefault(),ratio);
                 }
                 else
                 {
                     var lowestRatio = ratios.Aggregate((l, r) => l.Value < r.Value ? l : r);
                     if (ratio > lowestRatio.Value)
                     {
-                        if (movieTitle + " " +  _moviesContext.Movies.Where(a => a.Title == movieTitle).Select(movies => movies.Year) + ", " + _moviesContext.Movies.Where(a => a.Title == movieTitle).Select(movies => movies.Id) == lowestRatio.Key)
+                        if (movieTitle + " " +  _moviesContext.Movies.Where(a => a.Title == movieTitle).Select(movies => movies.Year).FirstOrDefault() + ", " + _moviesContext.Movies.Where(a => a.Title == movieTitle).Select(movies => movies.Id).FirstOrDefault() == lowestRatio.Key)
                         {
                             throw new Exception("Movies with same title");
                         }
                         ratios.Remove(lowestRatio.Key);
-                        ratios.Add(movieTitle + " " +  _moviesContext.Movies.Where(a => a.Title == movieTitle).Select(movies => movies.Year) + ", " + _moviesContext.Movies.Where(a => a.Title == movieTitle).Select(movies => movies.Id),ratio);
+                        ratios.Add(movieTitle + " " +  _moviesContext.Movies.Where(a => a.Title == movieTitle).Select(movies => movies.Year).FirstOrDefault() + ", " + _moviesContext.Movies.Where(a => a.Title == movieTitle).Select(movies => movies.Id).FirstOrDefault(),ratio);
                     }
                 }
             }
